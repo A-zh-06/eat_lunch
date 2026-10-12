@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>今天午饭吃什么</title>
+<style>
+/* ========== CSS Variables & Theme ========== */
+:root {
+  --bg: #f5f5f7;
+  --bg-card: #ffffff;
+  --bg-input: #f0f0f2;
+  --bg-modal: rgba(0, 0, 0, 0.5);
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --text-tertiary: #aeaeb2;
+  --accent: #ff6b35;
+  --accent-hover: #e55a2b;
+  --accent-light: rgba(255, 107, 53, 0.12);
+  --danger: #ff3b30;
+  --danger-light: rgba(255, 59, 48, 0.1);
+  --border: #e5e5ea;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --transition: 0.2s ease;
+}
+
+[data-theme="dark"] {
+  --bg: #000000;
+  --bg-card: #1c1c1e;
+  --bg-input: #2c2c2e;
+  --bg-modal: rgba(0, 0, 0, 0.7);
+  --text: #f5f5f7;
+  --text-secondary: #98989d;
+  --text-tertiary: #636366;
+  --accent: #ff9f0a;
+  --accent-hover: #ffb340;
+  --accent-light: rgba(255, 159, 10, 0.15);
+  --danger: #ff453a;
+  --danger-light: rgba(255, 69, 58, 0.15);
+  --border: #38383a;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #000000;
+    --bg-card: #1c1c1e;
+    --bg-input: #2c2c2e;
+    --bg-modal: rgba(0, 0, 0, 0.7);
+    --text: #f5f5f7;
+    --text-secondary: #98989d;
+    --text-tertiary: #636366;
+    --accent: #ff9f0a;
+    --accent-hover: #ffb340;
+    --accent-light: rgba(255, 159, 10, 0.15);
+    --danger: #ff453a;
+    --danger-light: rgba(255, 69, 58, 0.15);
+    --border: #38383a;
+    --shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* ========== Reset & Base ========== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  padding-bottom: calc(80px + var(--safe-bottom));
+  transition: background var(--transition), color var(--transition);
+}
+
+/* ========== Layout ========== */
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px;
+  padding-top: calc(16px + env(safe-area-inset-top, 0px));
+}
+
+/* ========== Header ========== */
+.header {
+  text-align: center;
+  padding: 20px 0 16px;
+}
+
+.header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--accent), #ff9a56);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.theme-toggle {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition);
+  min-height: 36px;
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
+/* ========== Card ========== */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+  transition: background var(--transition), box-shadow var(--transition);
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title .count {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+/* ========== Input Section ========== */
+.input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.input-group textarea {
+  flex: 1;
+  min-height: 44px;
+  max-height: 120px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text);
+  resize: vertical;
+  outline: none;
+  transition: border-color var(--transition);
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+.input-group textarea:focus {
+  border-color: var(--accent);
+}
+
+.input-group textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.btn-add {
+  min-width: 64px;
+  min-height: 44px;
+  padding: 10px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.btn-add:active {
+  background: var(--accent-hover);
+  transform: scale(0.95);
+}
+
+.input-hint {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+/* ========== Dish List ========== */
+.dish-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dish-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+  gap: 8px;
+}
+
+.dish-item:active {
+  background: var(--accent-light);
+}
+
+.dish-name {
+  flex: 1;
+  font-size: 1rem;
+  word-break: break-all;
+  min-height: 24px;
+  line-height: 1.4;
+}
+
+.dish-name-input {
+  flex: 1;
+  font-size: 1rem;
+  padding: 4px 8px;
+  border: 1.5px solid var(--accent);
+  border-radius: 6px;
+  background: var(--bg-input);
+  color: var(--text);
+  outline: none;
+  font-family: inherit;
+  min-width: 0;
+}
+
+.dish-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.dish-actions button {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+
+.dish-actions .btn-edit:active {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.dish-actions .btn-delete:active {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+.list-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-clear {
+  flex: 1;
+  min-height: 40px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1.5px solid var(--danger);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--danger);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-clear:active {
+  background: var(--danger-light);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 24px 16px;
+  color: var(--text-tertiary);
+  font-size: 0.95rem;
+}
+
+/* ========== Settings ========== */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  gap: 12px;
+}
+
+.setting-row + .setting-row {
+  border-top: 1px solid var(--border);
+}
+
+.setting-label {
+  font-size: 0.95rem;
+  color: var(--text);
+  flex: 1;
+}
+
+.setting-desc {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* Toggle Switch */
+.toggle {
+  position: relative;
+  width: 50px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border);
+  border-radius: 15px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  left: 2px;
+  top: 2px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform var(--transition);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle input:checked + .toggle-slider {
+  background: var(--accent);
+}
+
+.toggle input:checked + .toggle-slider::before {
+  transform: translateX(20px);
+}
+
+/* ========== History ========== */
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.history-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.btn-clear-history {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: all var(--transition);
+  min-height: 32px;
+}
+
+.btn-clear-history:active {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+.history-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+}
+
+.history-dish {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.history-time {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+/* ========== Fixed Bottom Button ========== */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px calc(12px + var(--safe-bottom));
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+  z-index: 100;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.bottom-bar .container-btn {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.btn-pick {
+  width: 100%;
+  min-height: 52px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--accent), #ff9a56);
+  color: #fff;
+  cursor: pointer;
+  transition: all var(--transition);
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-pick:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+}
+
+.btn-pick:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Pick animation */
+.btn-pick.picking {
+  animation: pickPulse 0.4s ease;
+  pointer-events: none;
+}
+
+@keyframes pickPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* ========== Slot Rolling Animation ========== */
+.rolling-container {
+  position: relative;
+  height: 72px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  border-radius: var(--radius);
+  background: var(--accent-light);
+}
+
+.rolling-strip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  will-change: transform;
+}
+
+.rolling-item {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--accent);
+  word-break: break-all;
+  padding: 0 16px;
+  line-height: 1.2;
+  flex-shrink: 0;
+  width: 100%;
+  text-align: center;
+}
+
+/* Fade edges of the rolling window */
+.rolling-container::before,
+.rolling-container::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 16px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.rolling-container::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--bg-card), transparent);
+}
+
+.rolling-container::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--bg-card), transparent);
+}
+
+/* Center highlight line */
+.rolling-highlight {
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  right: 8px;
+  height: 2px;
+  transform: translateY(-0.5px);
+  background: var(--accent);
+  opacity: 0.25;
+  border-radius: 1px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Final result (shown after rolling stops) */
+.result-final {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 24px;
+  word-break: break-all;
+  line-height: 1.3;
+  animation: resultReveal 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes resultReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Button text during rolling */
+.btn-pick-text {
+  display: inline-block;
+  transition: opacity 0.15s;
+}
+
+/* ========== Result Modal ========== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-modal);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 32px 24px;
+  text-align: center;
+  max-width: 360px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  transform: scale(0.85);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+  transform: scale(1);
+}
+
+.modal-emoji {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  animation: bounceIn 0.5s ease;
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.modal-label {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-copy {
+  min-height: 48px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-copy:active {
+  background: var(--accent-hover);
+  transform: scale(0.97);
+}
+
+.btn-close-modal {
+  min-height: 44px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-close-modal:active {
+  background: var(--bg-input);
+}
+
+/* ========== Confirm Dialog ========== */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-modal);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s ease;
+}
+
+.confirm-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.confirm-content {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 320px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  transform: scale(0.9);
+  transition: transform 0.25s ease;
+}
+
+.confirm-overlay.active .confirm-content {
+  transform: scale(1);
+}
+
+.confirm-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.confirm-message {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.confirm-actions button {
+  flex: 1;
+  min-height: 44px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-confirm-cancel {
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.btn-confirm-cancel:active {
+  background: var(--bg-input);
+}
+
+.btn-confirm-ok {
+  border: none;
+  background: var(--danger);
+  color: #fff;
+}
+
+.btn-confirm-ok:active {
+  opacity: 0.8;
+}
+
+/* ========== Toast ========== */
+.toast {
+  position: fixed;
+  top: calc(20px + env(safe-area-inset-top, 0px));
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  background: var(--text);
+  color: var(--bg);
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  z-index: 2000;
+  transition: transform 0.3s ease;
+  white-space: nowrap;
+  box-shadow: var(--shadow-lg);
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ========== Scrollbar ========== */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+/* ========== Utilities ========== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+</style>
+</head>
+<body>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Main Content -->
+<div class="container">
+  <!-- Header -->
+  <header class="header">
+    <h1>今天午饭吃什么</h1>
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="切换主题">🌙 深色</button>
+    </div>
+  </header>
+
+  <!-- Input Section -->
+  <section class="card">
+    <div class="input-group">
+      <textarea id="dishInput" rows="1" placeholder="输入菜名，支持批量粘贴"></textarea>
+      <button class="btn-add" id="btnAdd">添加</button>
+    </div>
+    <p class="input-hint">支持换行、逗号（,）、中文逗号（，）、顿号（、）分隔多个菜名</p>
+  </section>
+
+  <!-- Dish List Section -->
+  <section class="card">
+    <div class="card-title">
+      <span>菜名列表</span>
+      <span class="count" id="dishCount">0 个</span>
+    </div>
+    <ul class="dish-list" id="dishList"></ul>
+    <div class="empty-state" id="emptyState">还没有菜名，快来添加吧</div>
+    <div class="list-actions" id="listActions" style="display: none;">
+      <button class="btn-clear" id="btnClear">清空全部</button>
+    </div>
+  </section>
+
+  <!-- Settings Section -->
+  <section class="card">
+    <div class="setting-row">
+      <div>
+        <div class="setting-label">避免连续重复</div>
+        <div class="setting-desc">连续两次尽量不抽同一个</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="avoidRepeat" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-label">震动反馈</div>
+        <div class="setting-desc">抽取时手机震动提示</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="vibrationToggle" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </section>
+
+  <!-- History Section -->
+  <section class="card">
+    <div class="history-header">
+      <h3>抽取历史</h3>
+      <button class="btn-clear-history" id="btnClearHistory">清空历史</button>
+    </div>
+    <ul class="history-list" id="historyList"></ul>
+    <div class="empty-state" id="historyEmpty">暂无历史记录</div>
+  </section>
+</div>
+
+<!-- Fixed Bottom Pick Button -->
+<div class="bottom-bar">
+  <div class="container-btn">
+    <button class="btn-pick" id="btnPick">🎲 随机抽一个</button>
+  </div>
+</div>
+
+<!-- Result Modal -->
+<div class="modal-overlay" id="resultModal">
+  <div class="modal-content">
+    <div class="modal-emoji" id="modalEmoji">🎰</div>
+    <div class="modal-label" id="modalLabel">抽取中...</div>
+    <!-- Rolling slot (visible during animation) -->
+    <div class="rolling-container" id="rollingContainer" style="display: none;">
+      <div class="rolling-strip" id="rollingStrip"></div>
+      <div class="rolling-highlight"></div>
+    </div>
+    <!-- Final result (visible after animation) -->
+    <div class="result-final" id="resultFinal" style="display: none;"></div>
+    <div class="modal-actions" id="modalActions" style="display: none;">
+      <button class="btn-copy" id="btnCopy">📋 复制结果</button>
+      <button class="btn-close-modal" id="btnCloseModal">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Dialog -->
+<div class="confirm-overlay" id="confirmDialog">
+  <div class="confirm-content">
+    <div class="confirm-title" id="confirmTitle">确认清空</div>
+    <div class="confirm-message" id="confirmMessage">确定要清空所有菜名吗？此操作不可撤销。</div>
+    <div class="confirm-actions">
+      <button class="btn-confirm-cancel" id="confirmCancel">取消</button>
+      <button class="btn-confirm-ok" id="confirmOk">确认清空</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ========== Storage Helper ========== */
+const Storage = {
+  _available: null,
+
+  isAvailable() {
+    if (this._available !== null) return this._available;
+    try {
+      const test = '__storage_test__';
+      localStorage.setItem(test, test);
+      localStorage.removeItem(test);
+      this._available = true;
+    } catch (e) {
+      this._available = false;
+    }
+    return this._available;
+  },
+
+  get(key, fallback = null) {
+    if (!this.isAvailable()) return fallback;
+    try {
+      const val = localStorage.getItem(key);
+      return val !== null ? JSON.parse(val) : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  },
+
+  set(key, value) {
+    if (!this.isAvailable()) return false;
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  },
+
+  remove(key) {
+    if (!this.isAvailable()) return;
+    try {
+      localStorage.removeItem(key);
+    } catch (e) {}
+  }
+};
+
+/* ========== App State ========== */
+const DEFAULT_DISHES = ['红烧肉', '番茄炒蛋', '麻婆豆腐', '宫保鸡丁', '糖醋排骨', '鱼香肉丝'];
+
+let dishes = Storage.get('lunch_dishes', null);
+if (dishes === null) {
+  dishes = [...DEFAULT_DISHES];
+  Storage.set('lunch_dishes', dishes);
+}
+
+let history = Storage.get('lunch_history', []);
+let settings = Storage.get('lunch_settings', {
+  avoidRepeat: true,
+  vibration: true,
+  theme: 'auto'
+});
+
+let lastPick = Storage.get('lunch_last_pick', null);
+let isPicking = false;
+let confirmCallback = null;
+
+/* ========== DOM Elements ========== */
+const $ = (sel) => document.querySelector(sel);
+const dishInput = $('#dishInput');
+const btnAdd = $('#btnAdd');
+const dishList = $('#dishList');
+const dishCount = $('#dishCount');
+const emptyState = $('#emptyState');
+const listActions = $('#listActions');
+const btnClear = $('#btnClear');
+const btnPick = $('#btnPick');
+const resultModal = $('#resultModal');
+const modalEmoji = $('#modalEmoji');
+const modalLabel = $('#modalLabel');
+const rollingContainer = $('#rollingContainer');
+const rollingStrip = $('#rollingStrip');
+const resultFinal = $('#resultFinal');
+const modalActions = $('#modalActions');
+const btnCopy = $('#btnCopy');
+const btnCloseModal = $('#btnCloseModal');
+const historyList = $('#historyList');
+const historyEmpty = $('#historyEmpty');
+const btnClearHistory = $('#btnClearHistory');
+const avoidRepeatToggle = $('#avoidRepeat');
+const vibrationToggle = $('#vibrationToggle');
+const themeToggle = $('#themeToggle');
+const toast = $('#toast');
+const confirmDialog = $('#confirmDialog');
+const confirmTitle = $('#confirmTitle');
+const confirmMessage = $('#confirmMessage');
+const confirmCancel = $('#confirmCancel');
+const confirmOk = $('#confirmOk');
+
+/* ========== Init ========== */
+function init() {
+  avoidRepeatToggle.checked = settings.avoidRepeat;
+  vibrationToggle.checked = settings.vibration;
+  applyTheme(settings.theme);
+  renderDishes();
+  renderHistory();
+  bindEvents();
+}
+
+/* ========== Theme ========== */
+function applyTheme(theme) {
+  if (theme === 'auto') {
+    document.documentElement.removeAttribute('data-theme');
+    themeToggle.textContent = isDarkPreferred() ? '☀️ 浅色' : '🌙 深色';
+  } else if (theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    themeToggle.textContent = '☀️ 浅色';
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    themeToggle.textContent = '🌙 深色';
+  }
+}
+
+function isDarkPreferred() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function toggleTheme() {
+  const current = settings.theme;
+  if (current === 'auto') {
+    settings.theme = isDarkPreferred() ? 'light' : 'dark';
+  } else if (current === 'dark') {
+    settings.theme = 'light';
+  } else {
+    settings.theme = 'dark';
+  }
+  saveSettings();
+  applyTheme(settings.theme);
+}
+
+/* ========== Render Dishes ========== */
+function renderDishes() {
+  dishList.innerHTML = '';
+  dishCount.textContent = `${dishes.length} 个`;
+
+  if (dishes.length === 0) {
+    emptyState.style.display = 'block';
+    listActions.style.display = 'none';
+    return;
+  }
+
+  emptyState.style.display = 'none';
+  listActions.style.display = 'flex';
+
+  dishes.forEach((dish, index) => {
+    const li = document.createElement('li');
+    li.className = 'dish-item';
+    li.dataset.index = index;
+    li.innerHTML = `
+      <span class="dish-name">${escapeHtml(dish)}</span>
+      <div class="dish-actions">
+        <button class="btn-edit" aria-label="编辑" title="编辑">✏️</button>
+        <button class="btn-delete" aria-label="删除" title="删除">🗑️</button>
+      </div>
+    `;
+    dishList.appendChild(li);
+  });
+}
+
+/* ========== Render History ========== */
+function renderHistory() {
+  historyList.innerHTML = '';
+
+  if (history.length === 0) {
+    historyEmpty.style.display = 'block';
+    return;
+  }
+
+  historyEmpty.style.display = 'none';
+
+  history.forEach((item) => {
+    const li = document.createElement('li');
+    li.className = 'history-item';
+    li.innerHTML = `
+      <span class="history-dish">${escapeHtml(item.dish)}</span>
+      <span class="history-time">${formatTime(item.time)}</span>
+    `;
+    historyList.appendChild(li);
+  });
+}
+
+/* ========== Add Dishes ========== */
+function addDishes() {
+  const raw = dishInput.value.trim();
+  if (!raw) {
+    showToast('请输入菜名');
+    return;
+  }
+
+  // Split by newline, Chinese comma, English comma, 顿号
+  const names = raw
+    .split(/[\n\r,，、]+/)
+    .map(s => s.trim())
+    .filter(s => s.length > 0);
+
+  if (names.length === 0) {
+    showToast('请输入有效的菜名');
+    return;
+  }
+
+  let added = 0;
+  let skipped = 0;
+
+  names.forEach(name => {
+    // Truncate very long names
+    const trimmed = name.length > 20 ? name.slice(0, 20) : name;
+    if (dishes.includes(trimmed)) {
+      skipped++;
+    } else {
+      dishes.push(trimmed);
+      added++;
+    }
+  });
+
+  saveDishes();
+  renderDishes();
+  dishInput.value = '';
+
+  // Auto-resize textarea
+  dishInput.style.height = 'auto';
+
+  if (added > 0 && skipped > 0) {
+    showToast(`已添加 ${added} 个，跳过 ${skipped} 个重复`);
+  } else if (added > 0) {
+    showToast(`已添加 ${added} 个菜名`);
+  } else {
+    showToast('菜名已存在，无需添加');
+  }
+}
+
+/* ========== Delete Dish ========== */
+function deleteDish(index) {
+  if (index < 0 || index >= dishes.length) return;
+  const removed = dishes.splice(index, 1)[0];
+  saveDishes();
+  renderDishes();
+  showToast(`已删除「${removed}」`);
+}
+
+/* ========== Edit Dish ========== */
+function editDish(index) {
+  if (index < 0 || index >= dishes.length) return;
+
+  const li = dishList.querySelector(`[data-index="${index}"]`);
+  if (!li) return;
+
+  const nameSpan = li.querySelector('.dish-name');
+  const oldName = dishes[index];
+
+  // Replace span with input
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'dish-name-input';
+  input.value = oldName;
+  input.maxLength = 20;
+
+  nameSpan.replaceWith(input);
+  input.focus();
+  input.select();
+
+  // Disable other buttons during edit
+  const editBtn = li.querySelector('.btn-edit');
+  const deleteBtn = li.querySelector('.btn-delete');
+  editBtn.disabled = true;
+  deleteBtn.disabled = true;
+
+  const finishEdit = (save) => {
+    const newName = input.value.trim();
+    if (save && newName && newName !== oldName) {
+      if (dishes.includes(newName)) {
+        showToast('该菜名已存在');
+        restoreDisplay();
+        return;
+      }
+      dishes[index] = newName;
+      saveDishes();
+      showToast('已修改');
+    }
+    restoreDisplay();
+  };
+
+  const restoreDisplay = () => {
+    const span = document.createElement('span');
+    span.className = 'dish-name';
+    span.textContent = dishes[index];
+    input.replaceWith(span);
+    editBtn.disabled = false;
+    deleteBtn.disabled = false;
+  };
+
+  input.addEventListener('blur', () => finishEdit(true));
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      input.blur();
+    } else if (e.key === 'Escape') {
+      input.value = oldName;
+      input.blur();
+    }
+  });
+}
+
+/* ========== Clear All Dishes ========== */
+function clearAllDishes() {
+  showConfirm(
+    '确认清空',
+    `确定要清空全部 ${dishes.length} 个菜名吗？此操作不可撤销。`,
+    () => {
+      dishes.length = 0;
+      saveDishes();
+      renderDishes();
+      showToast('已清空全部菜名');
+    }
+  );
+}
+
+/* ========== Random Pick with Rolling Animation ========== */
+function randomPick() {
+  if (isPicking) return;
+
+  if (dishes.length === 0) {
+    showToast('请先添加菜名');
+    return;
+  }
+
+  isPicking = true;
+  btnPick.disabled = true;
+  btnPick.classList.add('picking');
+
+  // Vibration feedback
+  if (settings.vibration && navigator.vibrate) {
+    navigator.vibrate(30);
+  }
+
+  // Pre-determine the final result (with optional avoid-repeat)
+  let pickIndex;
+  if (dishes.length === 1) {
+    pickIndex = 0;
+  } else if (settings.avoidRepeat && lastPick !== null) {
+    const lastIndex = dishes.indexOf(lastPick);
+    const candidates = dishes.filter((_, i) => i !== lastIndex);
+    pickIndex = Math.floor(Math.random() * candidates.length);
+    const picked = candidates[pickIndex];
+    pickIndex = dishes.indexOf(picked);
+  } else {
+    pickIndex = Math.floor(Math.random() * dishes.length);
+  }
+
+  const picked = dishes[pickIndex];
+
+  // --- Show modal immediately in "rolling" state ---
+  modalEmoji.textContent = '🎰';
+  modalLabel.textContent = '抽取中...';
+  rollingContainer.style.display = 'block';
+  resultFinal.style.display = 'none';
+  modalActions.style.display = 'none';
+  resultModal.classList.add('active');
+
+  // --- Build the rolling strip ---
+  // We create a sequence of random dish names, with the final one at the end.
+  // Each item is ITEM_HEIGHT px tall. The strip scrolls upward via translateY.
+  const ITEM_HEIGHT = 72;
+  const totalSteps = 25 + Math.floor(Math.random() * 8); // 25-32 random items before landing
+  const sequence = [];
+
+  for (let i = 0; i < totalSteps; i++) {
+    sequence.push(dishes[Math.floor(Math.random() * dishes.length)]);
+  }
+  sequence.push(picked); // last item is the final result
+
+  // Build DOM
+  rollingStrip.innerHTML = '';
+  sequence.forEach(name => {
+    const div = document.createElement('div');
+    div.className = 'rolling-item';
+    div.textContent = name;
+    rollingStrip.appendChild(div);
+  });
+
+  // Start position: show the first item centered in the viewport
+  // The viewport is ITEM_HEIGHT tall, so to center item[0] we need translateY = 0
+  let currentOffset = 0;
+  rollingStrip.style.transition = 'none';
+  rollingStrip.style.transform = `translateY(0px)`;
+
+  // Force reflow so the transition reset takes effect
+  void rollingStrip.offsetHeight;
+
+  // Target: scroll so the last item (index = sequence.length - 1) is centered
+  const targetOffset = -(sequence.length - 1) * ITEM_HEIGHT;
+
+  // --- Animate with easeOutQuart over 1.5s ---
+  const duration = 1500;
+  const startTime = performance.now();
+
+  // Tick vibration during rolling (subtle haptic ticks that slow down)
+  let nextTickTime = 80;
+
+  function easeOutQuart(t) {
+    return 1 - Math.pow(1 - t, 4);
+  }
+
+  function animateRolling(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const easedProgress = easeOutQuart(progress);
+
+    currentOffset = targetOffset * easedProgress;
+    rollingStrip.style.transform = `translateY(${currentOffset}px)`;
+
+    // Haptic ticks that slow down with the rolling
+    if (settings.vibration && navigator.vibrate) {
+      const currentSpeed = 1 - easedProgress; // 1 = fast, 0 = stopped
+      const tickInterval = 60 + (1 - currentSpeed) * 300;
+      if (elapsed > nextTickTime && currentSpeed > 0.05) {
+        navigator.vibrate(8);
+        nextTickTime = elapsed + tickInterval;
+      }
+    }
+
+    if (progress < 1) {
+      requestAnimationFrame(animateRolling);
+    } else {
+      // Rolling complete — show final result
+      onRollingComplete(picked, pickIndex);
+    }
+  }
+
+  // Small delay before starting animation so modal transition is visible
+  setTimeout(() => {
+    requestAnimationFrame(animateRolling);
+  }, 200);
+}
+
+function onRollingComplete(picked, pickIndex) {
+  // Final vibration burst
+  if (settings.vibration && navigator.vibrate) {
+    navigator.vibrate([20, 40, 20, 40, 30]);
+  }
+
+  // Switch from rolling strip to final result display
+  rollingContainer.style.display = 'none';
+  resultFinal.textContent = picked;
+  resultFinal.style.display = 'block';
+  modalEmoji.textContent = '🍱';
+  modalLabel.textContent = '今天午饭吃';
+  modalActions.style.display = 'flex';
+
+  // Save last pick
+  lastPick = picked;
+  Storage.set('lunch_last_pick', lastPick);
+
+  // Add to history
+  history.unshift({
+    dish: picked,
+    time: new Date().toISOString()
+  });
+
+  // Keep only last 20
+  if (history.length > 20) {
+    history = history.slice(0, 20);
+  }
+
+  Storage.set('lunch_history', history);
+  renderHistory();
+
+  // Reset button state
+  btnPick.classList.remove('picking');
+  btnPick.disabled = false;
+  isPicking = false;
+}
+
+/* ========== Copy Result ========== */
+function copyResult() {
+  const text = `今天午饭吃：${resultFinal.textContent}`;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('已复制到剪贴板');
+    }).catch(() => {
+      fallbackCopy(text);
+    });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text) {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.style.position = 'fixed';
+  textarea.style.left = '-9999px';
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand('copy');
+    showToast('已复制到剪贴板');
+  } catch (e) {
+    showToast('复制失败，请手动复制');
+  }
+  document.body.removeChild(textarea);
+}
+
+/* ========== Confirm Dialog ========== */
+function showConfirm(title, message, onConfirm) {
+  confirmTitle.textContent = title;
+  confirmMessage.textContent = message;
+  confirmCallback = onConfirm;
+  confirmDialog.classList.add('active');
+}
+
+function hideConfirm() {
+  confirmDialog.classList.remove('active');
+  confirmCallback = null;
+}
+
+/* ========== Toast ========== */
+let toastTimer = null;
+
+function showToast(message) {
+  if (toastTimer) clearTimeout(toastTimer);
+  toast.textContent = message;
+  toast.classList.add('show');
+  toastTimer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2000);
+}
+
+/* ========== Helpers ========== */
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function formatTime(isoStr) {
+  const date = new Date(isoStr);
+  const now = new Date();
+  const isToday = date.toDateString() === now.toDateString();
+
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+
+  if (isToday) {
+    return `今天 ${hours}:${minutes}`;
+  }
+
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  if (date.toDateString() === yesterday.toDateString()) {
+    return `昨天 ${hours}:${minutes}`;
+  }
+
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${month}/${day} ${hours}:${minutes}`;
+}
+
+function saveDishes() {
+  Storage.set('lunch_dishes', dishes);
+}
+
+function saveSettings() {
+  Storage.set('lunch_settings', settings);
+}
+
+/* ========== Event Bindings ========== */
+function bindEvents() {
+  // Add dish
+  btnAdd.addEventListener('click', addDishes);
+  dishInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      addDishes();
+    }
+  });
+
+  // Auto-resize textarea
+  dishInput.addEventListener('input', () => {
+    dishInput.style.height = 'auto';
+    dishInput.style.height = Math.min(dishInput.scrollHeight, 120) + 'px';
+  });
+
+  // Dish list delegation: edit & delete
+  dishList.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const li = btn.closest('.dish-item');
+    if (!li) return;
+    const index = parseInt(li.dataset.index, 10);
+
+    if (btn.classList.contains('btn-delete')) {
+      deleteDish(index);
+    } else if (btn.classList.contains('btn-edit')) {
+      editDish(index);
+    }
+  });
+
+  // Clear all
+  btnClear.addEventListener('click', clearAllDishes);
+
+  // Pick
+  btnPick.addEventListener('click', randomPick);
+
+  // Modal
+  btnCopy.addEventListener('click', copyResult);
+  btnCloseModal.addEventListener('click', () => {
+    resultModal.classList.remove('active');
+  });
+  resultModal.addEventListener('click', (e) => {
+    if (e.target === resultModal) {
+      resultModal.classList.remove('active');
+    }
+  });
+
+  // History
+  btnClearHistory.addEventListener('click', () => {
+    if (history.length === 0) return;
+    showConfirm(
+      '清空历史',
+      '确定要清空所有抽取历史吗？',
+      () => {
+        history.length = 0;
+        Storage.set('lunch_history', history);
+        Storage.remove('lunch_last_pick');
+        lastPick = null;
+        renderHistory();
+        showToast('已清空历史');
+      }
+    );
+  });
+
+  // Confirm dialog
+  confirmCancel.addEventListener('click', hideConfirm);
+  confirmOk.addEventListener('click', () => {
+    if (typeof confirmCallback === 'function') {
+      confirmCallback();
+    }
+    hideConfirm();
+  });
+  confirmDialog.addEventListener('click', (e) => {
+    if (e.target === confirmDialog) hideConfirm();
+  });
+
+  // Settings
+  avoidRepeatToggle.addEventListener('change', () => {
+    settings.avoidRepeat = avoidRepeatToggle.checked;
+    saveSettings();
+  });
+
+  vibrationToggle.addEventListener('change', () => {
+    settings.vibration = vibrationToggle.checked;
+    saveSettings();
+  });
+
+  // Theme toggle
+  themeToggle.addEventListener('click', toggleTheme);
+
+  // Listen for system theme changes
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (settings.theme === 'auto') {
+      applyTheme('auto');
+    }
+  });
+
+  // Prevent double-tap zoom on iOS
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', (e) => {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+      e.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, { passive: false });
+}
+
+/* ========== Start ========== */
+init();
+</script>
+</body>
+</html>
